@@ -14,6 +14,10 @@ const blogSchema = new Schema<TBlog>({
     type: Boolean,
     default: true,
   },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 export const Blog = model<TBlog>('Blog', blogSchema);

@@ -1,0 +1,69 @@
+import { NextFunction, Request, Response } from 'express';
+import { blogService } from './blog.service';
+
+const createBlog = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { title, content, author } = req.body;
+
+    // Ensure the logged-in user ID is available
+    const loggedUser = req.user?.userId;
+    if (loggedUser !== author) {
+      res.status(401).json({
+        success: false,
+        message: 'You must be logged in to create a blog',
+      });
+    }
+
+    // const { title, content } = req.body;
+    // const loggedUser = req.user?.userId;
+    const newBlog = await blogService.createBlogIntoDb({
+      title,
+      content,
+      author: loggedUser,
+    });
+    res.status(201).json({
+      success: true,
+      message: 'Blog created successfully',
+      data: newBlog,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const updatedBlog = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // console.log(payload);
+    // // console.log(req.params.id);
+    // // console.log(req.user?.userId);
+
+    // if (req.user?.userId !== req.params.id) {
+    //   throw new Error('You are not logged in');
+    // }
+
+    const blogId = req.params.id; // Blog ID from URL
+    const { title, content } = req.body; // Blog data from request body
+    const loggedUser = req.user?.userId;
+    if (!loggedUser) {
+      res.status(401).json({
+        success: false,
+        message: 'You must be logged in to update a blog',
+      });
+    }
+    const updatedBlog = await blogService.updateBlog(
+      blogId,
+      { title, content },
+      loggedUser,
+    ); // User ID from authenticated token
+    res.status(201).json({
+      success: true,
+      message: 'Blog updated successfully',
+      data: updatedBlog,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const blogController = {
+  createBlog,
+  updatedBlog,
+};

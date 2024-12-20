@@ -5,9 +5,11 @@ import { authRoutes } from './modules/auth/auth.routes';
 import globalErrorhandler from './middleware/globalErrorhandler';
 import notfound from './middleware/notfound';
 import { userRotes } from './modules/user/user.routes';
+import { blogRoutes } from './modules/blogs/blog.routes';
 app.use(express.json());
 app.use(cors());
 app.use('/api/auth', authRoutes);
+app.use('/api', blogRoutes);
 app.use('/api/user', userRotes);
 app.get('/', (req: Request, res: Response) => {
   res.send('hi World!');

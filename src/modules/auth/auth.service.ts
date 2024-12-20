@@ -23,11 +23,15 @@ const login = async (payload: TLogin) => {
   if (!validUser) {
     throw new Error("Password didn't matched");
   }
-  const token = jwt.sign(
-    { email: userExist.email, role: userExist.role },
-    config.default_password as string,
-    { expiresIn: '7d' },
-  );
+  const jwtPayload = {
+    userId: userExist._id,
+    role: userExist.role,
+    email: userExist.email,
+  };
+  const token = jwt.sign(jwtPayload, config.default_password as string, {
+    expiresIn: '7d',
+  });
+
   return { token, userExist };
 };
 
