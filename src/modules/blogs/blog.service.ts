@@ -27,7 +27,33 @@ const updateBlog = async (
 
   return result;
 };
+const deleteBlog = async (blogId: string, userId: string) => {
+  const blog = await Blog.findById(blogId);
+  if (!blog) {
+    throw new Error('Blog Not found');
+  }
+  if (blog.author.toString() !== userId) {
+    throw new Error('You are not authorized to update this blog');
+  }
+  const deleteBlog = await Blog.findByIdAndDelete(blog);
+  return deleteBlog;
+};
+const getAllBlogs = async (query: Record<string, unknown>) => {
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  const result = await Blog.find({
+    $or: ['title'].map((fields) => ({
+      [fields]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+  return result;
+};
 export const blogService = {
   createBlogIntoDb,
   updateBlog,
+  deleteBlog,
+  getAllBlogs,
 };

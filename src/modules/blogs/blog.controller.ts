@@ -63,7 +63,50 @@ const updatedBlog = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+const deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const blogId = req.params.id;
+    const loggedUser = req.user?.userId;
+
+    if (!loggedUser) {
+      res.status(401).json({
+        success: false,
+        message: 'You must be logged in to delete a blog',
+      });
+    }
+
+    const isDeleted = await blogService.deleteBlog(blogId, loggedUser);
+
+    if (!isDeleted) {
+      res.status(404).json({
+        success: false,
+        message: 'Blog not found or you are not authorized to delete it',
+      });
+    }
+
+    res.status(200).json({
+      message: 'Blog deleted successfully',
+      success: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getAllBolgs = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await blogService.getAllBlogs(req.query);
+    res.status(201).json({
+      success: true,
+      message: 'All blogs rettreive successfully',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const blogController = {
   createBlog,
   updatedBlog,
+  deleteBlog,
+  getAllBolgs,
 };
