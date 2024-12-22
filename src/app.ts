@@ -6,11 +6,13 @@ import globalErrorhandler from './middleware/globalErrorhandler';
 import notfound from './middleware/notfound';
 import { userRotes } from './modules/user/user.routes';
 import { blogRoutes } from './modules/blogs/blog.routes';
+import { adminRoutes } from './modules/admin/admin.routes';
 app.use(express.json());
 app.use(cors());
 app.use('/api/auth', authRoutes);
 app.use('/api', blogRoutes);
 app.use('/api/user', userRotes);
+app.use('/api/admin', adminRoutes);
 app.get('/', (req: Request, res: Response) => {
   res.send('hi World!');
 });

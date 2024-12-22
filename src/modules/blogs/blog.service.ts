@@ -41,7 +41,7 @@ const deleteBlog = async (blogId: string, userId: string) => {
 const getAllBlogs = async (query: Record<string, unknown>) => {
   const queryobj = { ...query };
   const searchablefields = ['title'];
-  const excludes = ['searchTerm', 'sortBy', 'sortOrder'];
+  const excludes = ['searchTerm', 'sortBy', 'sortOrder', 'sortOrder'];
   let searchTerm = '';
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
@@ -55,17 +55,15 @@ const getAllBlogs = async (query: Record<string, unknown>) => {
   });
 
   const filterQuery = searchQuery.find(queryobj);
-  let sortBy = 'createdAt';
-  if (query?.sortBy) {
-    sortBy = query?.sortBy as string;
-  }
-  const sortQuery = filterQuery.sort(sortBy);
-  // let sortOrder = 'createdAt';
-  // if (query?.sortOrder == 'desc') {
-  //   sortOrder = '-createdAt';
+  // let sortBy = 'createdAt';
+  // if (query?.sortBy) {
+  //   sortBy = query?.sortBy as string;
   // }
-  // const sortByOrder = await sortQuery.sort(sortOrder);
-  return sortQuery;
+  // const sortQuery = filterQuery.sort(sortBy);
+  const sortBy = (query?.sortBy as string) || 'createdAt';
+  const sortOrder = query?.sortOrder === 'desc' ? -1 : 1;
+  const sortedQuery = filterQuery.sort({ [sortBy]: sortOrder });
+  return sortedQuery;
 };
 export const blogService = {
   createBlogIntoDb,
