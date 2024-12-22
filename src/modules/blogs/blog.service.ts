@@ -39,17 +39,33 @@ const deleteBlog = async (blogId: string, userId: string) => {
   return deleteBlog;
 };
 const getAllBlogs = async (query: Record<string, unknown>) => {
+  const queryobj = { ...query };
+  const searchablefields = ['title'];
+  const excludes = ['searchTerm', 'sortBy', 'sortOrder'];
   let searchTerm = '';
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
   }
+  excludes.forEach((el) => delete queryobj[el]);
 
-  const result = await Blog.find({
-    $or: ['title'].map((fields) => ({
+  const searchQuery = Blog.find({
+    $or: searchablefields.map((fields) => ({
       [fields]: { $regex: searchTerm, $options: 'i' },
     })),
   });
-  return result;
+
+  const filterQuery = searchQuery.find(queryobj);
+  let sortBy = 'createdAt';
+  if (query?.sortBy) {
+    sortBy = query?.sortBy as string;
+  }
+  const sortQuery = filterQuery.sort(sortBy);
+  // let sortOrder = 'createdAt';
+  // if (query?.sortOrder == 'desc') {
+  //   sortOrder = '-createdAt';
+  // }
+  // const sortByOrder = await sortQuery.sort(sortOrder);
+  return sortQuery;
 };
 export const blogService = {
   createBlogIntoDb,
