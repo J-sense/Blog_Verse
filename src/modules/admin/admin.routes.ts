@@ -4,7 +4,7 @@ import auth from '../../middleware/authenticat';
 
 const router = express.Router();
 router.patch(
-  '/:id/block/users',
+  '/users/:id/block',
   auth('admin'),
   adminContrller.findeUserForblock,
 );

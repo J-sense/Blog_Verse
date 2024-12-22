@@ -3,23 +3,20 @@ import { blogService } from './blog.service';
 
 const createBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, content, author } = req.body;
-
     // Ensure the logged-in user ID is available
     const loggedUser = req.user?.userId;
-    if (loggedUser !== author) {
+    if (!loggedUser) {
       res.status(401).json({
         success: false,
         message: 'You must be logged in to create a blog',
       });
     }
-
-    // const { title, content } = req.body;
-    // const loggedUser = req.user?.userId;
+    const { title, content } = req.body;
+    // Create a new blog
     const newBlog = await blogService.createBlogIntoDb({
       title,
       content,
-      author: loggedUser,
+      author: loggedUser, // Use the logged-in user's ID as the author
     });
     res.status(201).json({
       success: true,
@@ -30,6 +27,7 @@ const createBlog = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+
 const updatedBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // console.log(payload);

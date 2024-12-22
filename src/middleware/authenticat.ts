@@ -25,6 +25,11 @@ const auth = (...requiredRoles: string[]) => {
     if (!user) {
       throw new Error('This user is not found !');
     }
+    const userStatus = user?.isBlocked;
+
+    if (userStatus) {
+      throw new Error('This user is blocked ! !');
+    }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new Error('You are not authorized');

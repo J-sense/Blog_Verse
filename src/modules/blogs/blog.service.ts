@@ -52,7 +52,7 @@ const getAllBlogs = async (query: Record<string, unknown>) => {
     $or: searchablefields.map((fields) => ({
       [fields]: { $regex: searchTerm, $options: 'i' },
     })),
-  });
+  }).populate('author');
 
   const filterQuery = searchQuery.find(queryobj);
   // let sortBy = 'createdAt';
